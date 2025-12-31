@@ -1,7 +1,20 @@
 [package]
 name = "lolcat-rs"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
+description = "A high-performance, vibrant rainbow coloring tool for your terminal"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/umairimtiaz9/lolcat-rs"
+keywords = ["lolcat", "rainbow", "terminal", "cli", "color"]
+categories = ["command-line-utilities"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }

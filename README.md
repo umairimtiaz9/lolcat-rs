@@ -17,9 +17,14 @@
 
 ## 📦 Installation
 
+### From crates.io
+```bash
+cargo install lolcat-rs
+```
+
 ### From Source
 ```bash
-git clone https://github.com/your-username/lolcat-rs.git
+git clone https://github.com/umairimtiaz9/lolcat-rs.git
 cd lolcat-rs
 cargo install --path .
 ```
