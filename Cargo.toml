@@ -1,6 +1,6 @@
 [package]
 name = "lolcat-rs"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 description = "A high-performance, vibrant rainbow coloring tool for your terminal"
 license = "MIT"
