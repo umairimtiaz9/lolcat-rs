@@ -1,0 +1,9 @@
+[package]
+name = "lolcat-rs"
+version = "0.1.0"
+edition = "2026"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+is-terminal = "0.4"
+rand = "0.9"
