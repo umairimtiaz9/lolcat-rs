@@ -1,6 +1,6 @@
 [package]
 name = "lolcat-rs"
-version = "0.1.2"
+version = "0.2.0"
 edition = "2024"
 description = "A high-performance, vibrant rainbow coloring tool for your terminal"
 license = "MIT"
@@ -17,6 +17,4 @@ panic = "abort"
 strip = true
 
 [dependencies]
-clap = { version = "4", features = ["derive"] }
-is-terminal = "0.4"
-rand = "0.9"
+lexopt = "0.3"

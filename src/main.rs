@@ -1,38 +1,78 @@
 mod color;
 mod process;
 
-use clap::Parser;
-use is_terminal::IsTerminal;
 use std::fs::File;
-use std::io::{self, BufReader, BufWriter};
-use rand::Rng;
+use std::io::{self, BufReader, BufWriter, IsTerminal};
+use lexopt::prelude::*;
 
-#[derive(Parser)]
-#[command(name = "rust-lolcat")]
-#[command(about = "A high-performance, vibrant rainbow coloring tool")]
-struct Cli {
-    #[arg(default_value = "-")]
+struct Args {
     files: Vec<String>,
-    #[arg(short, long, default_value_t = 0.1)]
     freq: f64,
-    #[arg(short, long, default_value_t = 2.6)]
     spread: f64,
 }
 
-fn main() -> io::Result<()> {
-    let args = Cli::parse();
+fn parse_args() -> Result<Args, lexopt::Error> {
+    let mut files = Vec::new();
+    let mut freq = 0.1;
+    let mut spread = 2.6;
+    let mut parser = lexopt::Parser::from_env();
+
+    while let Some(arg) = parser.next()? {
+        match arg {
+            Short('f') | Long("freq") => {
+                freq = parser.value()?.parse()?;
+            }
+            Short('s') | Long("spread") => {
+                spread = parser.value()?.parse()?;
+            }
+            Short('h') | Long("help") => {
+                println!("lolcat-rs - A high-performance, vibrant rainbow coloring tool");
+                println!("\nUsage: lolcat-rs [OPTIONS] [FILES]...");
+                println!("\nOptions:");
+                println!("  -f, --freq <FREQ>      Rainbow frequency [default: 0.1]");
+                println!("  -s, --spread <SPREAD>  Rainbow spread [default: 2.6]");
+                println!("  -h, --help             Print help");
+                std::process::exit(0);
+            }
+            Value(val) => {
+                files.push(val.into_string()?);
+            }
+            _ => return Err(arg.unexpected()),
+        }
+    }
+
+    if files.is_empty() {
+        files.push("-".to_string());
+    }
+
+    Ok(Args {
+        files,
+        freq,
+        spread,
+    })
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let args = parse_args()?;
     let is_atty = io::stdout().is_terminal();
     let mut writer = BufWriter::new(io::stdout().lock());
-    let mut rng = rand::rng();
 
-    // Match Python exactly:
-    // 1. Spread tuned to 2.6 (slightly faster than Python's 3.0 to enhance color vibrancy)
-    // 2. Seed = integer range 0..256 (matches random.randint(0, 256))
-    // 3. No phase noise
+    // Enhanced seed: Mix nanoseconds with Process ID and apply a bit-mixer (SplitMix64 style)
+    let seed = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| {
+            let mut x = (d.as_nanos() as u64) ^ (std::process::id() as u64).rotate_left(32);
+            // Simple mixing to spread entropy
+            x = (x ^ (x >> 30)).wrapping_mul(0xBF58476D1CE4E5B9);
+            x = (x ^ (x >> 27)).wrapping_mul(0x94D049BB133111EB);
+            ((x ^ (x >> 31)) % 256) as f64
+        })
+        .unwrap_or(0.0);
+
     let mut generator = color::ColorGenerator {
         freq: args.freq,
         spread: args.spread,
-        seed: rng.random_range(0..256) as f64,
+        seed,
         line_idx: 0,
     };
 

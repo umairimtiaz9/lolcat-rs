@@ -27,9 +27,14 @@ impl ColorGenerator {
         (r as u8, g as u8, b as u8)
     }
 
-    /// Formats a string with TrueColor ANSI codes
-    pub fn format_char(&self, c: char, char_idx: usize) -> String {
+    /// Writes a character with TrueColor ANSI codes directly to a writer
+    pub fn write_colored_char<W: std::io::Write>(
+        &self,
+        w: &mut W,
+        c: char,
+        char_idx: usize,
+    ) -> std::io::Result<()> {
         let (r, g, b) = self.get_rgb(char_idx);
-        format!("\x1b[38;2;{};{};{}m{}", r, g, b, c)
+        write!(w, "\x1b[38;2;{};{};{}m{}", r, g, b, c)
     }
 }

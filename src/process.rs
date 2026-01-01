@@ -26,7 +26,7 @@ pub fn process_input<R: BufRead, W: Write>(
 
         for (char_idx, c) in trimmed.chars().enumerate() {
             if is_atty {
-                write!(writer, "{}", generator.format_char(c, char_idx))?;
+                generator.write_colored_char(writer, c, char_idx)?;
             } else {
                 write!(writer, "{}", c)?;
             }
