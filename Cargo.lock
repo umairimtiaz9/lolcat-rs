@@ -10,7 +10,7 @@ checksum = "9fa0e2a1fcbe2f6be6c42e342259976206b383122fc152e872795338b5a3f3a7"
 
 [[package]]
 name = "lolcat-rs"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "lexopt",
 ]
